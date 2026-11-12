@@ -137,15 +137,14 @@ main.show .name span{animation:letter .9s cubic-bezier(.2,1.4,.4,1) forwards}
 .wish p{font-family:var(--serif);font-size:1.22rem;line-height:1.35;font-weight:500}
 
 /* gallery */
-.polaroids{position:relative;height:440px;width:100%;max-width:400px;margin:36px auto 0}
-.pol{position:absolute;top:0;left:50%;width:62%;padding:10px 10px 44px;background:#fffaf6;border-radius:4px;box-shadow:0 20px 45px rgba(0,0,0,.45);
-  transform:translateX(-50%) rotate(var(--r)) translate(var(--x),var(--y));transition:transform .6s cubic-bezier(.2,1.2,.4,1),z-index 0s;cursor:pointer}
+.polaroids{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:34px 20px 26px;margin:0 -20px;width:calc(100% + 40px);scrollbar-width:none}
+.polaroids::-webkit-scrollbar{display:none}
+.pol{position:relative;flex:none;width:68%;max-width:260px;padding:10px 10px 46px;background:#fffaf6;border-radius:4px;box-shadow:0 20px 45px rgba(0,0,0,.45);
+  scroll-snap-align:center;transform:rotate(var(--r,-2deg));transition:transform .4s cubic-bezier(.2,1.2,.4,1);cursor:pointer}
+.pol:nth-child(even){--r:2.5deg}
 .pol img{width:100%;aspect-ratio:3/4;object-fit:cover}
 .pol span{position:absolute;bottom:10px;left:0;right:0;font-family:var(--script);font-size:1.6rem;color:#7a3550}
-.pol:nth-child(1){--r:-9deg;--x:-34%;--y:30px;z-index:1}
-.pol:nth-child(2){--r:7deg;--x:34%;--y:52px;z-index:2}
-.pol:nth-child(3){--r:-2deg;--x:0%;--y:0px;z-index:3}
-.pol.top{z-index:5;transform:translateX(-50%) rotate(0) translate(0,-6px) scale(1.06)}
+.pol:active{transform:rotate(0) scale(1.03)}
 .tip{margin-top:16px;font-size:.82rem;color:var(--muted)}
 
 /* reel */
@@ -223,7 +222,7 @@ footer{padding:30px 20px 50px;text-align:center;font-size:.75rem;color:var(--mut
       <div class="name" id="name" aria-label="Masroor"></div>
       <div class="date">13 November</div>
       <div class="arch reveal">
-        <img src="media/photo1.jpg" alt="Masroor">
+        <img src="media/hero.jpg" alt="Masroor">
         <span class="spark" style="top:-10px;right:-6px">✨</span>
         <span class="spark" style="bottom:40px;left:-16px;animation-delay:.8s">💫</span>
         <span class="spark" style="top:38%;right:-18px;animation-delay:1.6s">🎈</span>
@@ -274,11 +273,16 @@ footer{padding:30px 20px 50px;text-align:center;font-size:.75rem;color:var(--mut
       <h2 class="gold reveal">The Birthday Star</h2>
       <p class="lead reveal d1">Looking good as always 😎</p>
       <div class="polaroids reveal d2" id="pols">
-        <div class="pol" data-src="media/photo3.jpg"><img src="media/photo3.jpg" alt="Masroor by the water" loading="lazy"><span>Cool vibes</span></div>
-        <div class="pol" data-src="media/photo2.jpg"><img src="media/photo2.jpg" alt="Masroor portrait" loading="lazy"><span>Legend</span></div>
-        <div class="pol" data-src="media/photo1.jpg"><img src="media/photo1.jpg" alt="Masroor in a jacket" loading="lazy"><span>Masroor ♡</span></div>
+        <div class="pol" data-src="media/hero.jpg"><img src="media/hero.jpg" alt="Masroor" loading="lazy"><span>Masroor ♡</span></div>
+        <div class="pol" data-src="media/photo1.jpg"><img src="media/photo1.jpg" alt="Masroor" loading="lazy"><span>Style icon</span></div>
+        <div class="pol" data-src="media/photo4.jpg"><img src="media/photo4.jpg" alt="Masroor" loading="lazy"><span>Mirror check</span></div>
+        <div class="pol" data-src="media/photo5.jpg"><img src="media/photo5.jpg" alt="Masroor" loading="lazy"><span>King mode</span></div>
+        <div class="pol" data-src="media/photo6.jpg"><img src="media/photo6.jpg" alt="Masroor" loading="lazy"><span>That smile</span></div>
+        <div class="pol" data-src="media/photo7.jpg"><img src="media/photo7.jpg" alt="Masroor" loading="lazy"><span>Eid look</span></div>
+        <div class="pol" data-src="media/photo3.jpg"><img src="media/photo3.jpg" alt="Masroor" loading="lazy"><span>Cool vibes</span></div>
+        <div class="pol" data-src="media/photo2.jpg"><img src="media/photo2.jpg" alt="Masroor" loading="lazy"><span>Legend</span></div>
       </div>
-      <p class="tip">Tap a photo to bring it to the front</p>
+      <p class="tip">Swipe → and tap a photo to see it big</p>
     </div>
   </section>
 
@@ -387,41 +391,11 @@ function petals(){ if (reduce) return; setInterval(() => { if (document.hidden) 
   p.style.cssText = `left:${Math.random()*100}vw;--dx:${(Math.random()-.5)*200}px;--rot:${Math.random()*720}deg;animation-duration:${9+Math.random()*7}s;opacity:${.4+Math.random()*.4}`;
   document.body.appendChild(p); p.addEventListener('animationend', () => p.remove()); }, 900); }
 
-/* ---------- music box: "Happy Birthday" ---------- */
-let ac, master, musicOn = false, loopTimer;
-const N = {A3:220,C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,C3:130.81,F3:174.61,G3:196};
-const MEL = [['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
-             ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
-             ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',2],
-             ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',3]];
-const BASS = [[1,'C3'],[4,'G3'],[7,'G3'],[10,'C3'],[13,'C3'],[16,'F3'],[19,'F3'],[22,'C3'],[23,'G3'],[25,'C3']];
-function note(f, t, d, vol = .22, type = 'sine'){
-  const o = ac.createOscillator(), o2 = ac.createOscillator(), g = ac.createGain();
-  o.type = type; o.frequency.value = f; o2.type = 'sine'; o2.frequency.value = f*2.005;
-  const g2 = ac.createGain(); g2.gain.value = .25;
-  o.connect(g); o2.connect(g2); g2.connect(g); g.connect(master);
-  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t+.012); g.gain.exponentialRampToValueAtTime(.001, t+Math.max(d,0.6)+.9);
-  o.start(t); o2.start(t); o.stop(t+d+2); o2.stop(t+d+2);
-}
-function playSong(){
-  const beat = 60/96, start = ac.currentTime + .15; let t = start, b = 0;
-  // pickup: melody beat 0 starts at t, bass indexes in beats from first full bar (beat 1)
-  for (const [n, d] of MEL){ note(N[n], t, d*beat*.95, .2, 'triangle'); t += d*beat; b += d; }
-  for (const [at, n] of BASS) note(N[n], start + at*beat, 2*beat, .1, 'sine');
-  const len = (t - start) * 1000;
-  loopTimer = setTimeout(() => { if (musicOn) playSong(); }, len + 3200);
-}
-function startMusic(){
-  try {
-    if (!ac){ ac = new (window.AudioContext||window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = .9;
-      const dl = ac.createDelay(), fb = ac.createGain(), wet = ac.createGain(); dl.delayTime.value = .23; fb.gain.value = .28; wet.gain.value = .3;
-      master.connect(ac.destination); master.connect(dl); dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(ac.destination); }
-    ac.resume(); if (musicOn) return; musicOn = true; master.gain.setTargetAtTime(.9, ac.currentTime, .1); playSong();
-    $('#music').classList.add('playing'); $('#music').textContent = '🎵';
-  } catch(e){}
-}
-function stopMusic(){ musicOn = false; clearTimeout(loopTimer); if (master) master.gain.setTargetAtTime(0, ac.currentTime, .15);
-  $('#music').classList.remove('playing'); $('#music').textContent = '🔇'; }
+/* ---------- music: his song ---------- */
+const song = new Audio('media/song.m4a'); song.loop = true; song.preload = 'auto'; song.volume = .9;
+let musicOn = false;
+function startMusic(){ musicOn = true; song.play().catch(() => {}); $('#music').classList.add('playing'); $('#music').textContent = '🎵'; }
+function stopMusic(){ musicOn = false; song.pause(); $('#music').classList.remove('playing'); $('#music').textContent = '🔇'; }
 $('#music').addEventListener('click', () => musicOn ? stopMusic() : startMusic());
 
 /* ---------- gate & countdown ---------- */
@@ -487,7 +461,7 @@ let micStream, micRaf;
 async function startMic(){
   try {
     micStream = await navigator.mediaDevices.getUserMedia({audio:true});
-    if (!ac) startMusic();
+    const ac = new (window.AudioContext||window.webkitAudioContext)();
     const src = ac.createMediaStreamSource(micStream), an = ac.createAnalyser(); an.fftSize = 512; src.connect(an);
     const buf = new Uint8Array(an.fftSize); let loud = 0;
     $('#micBtn').textContent = '🎤 Listening… blow now!';
@@ -501,10 +475,8 @@ function stopMic(){ cancelAnimationFrame(micRaf); if (micStream) micStream.getTr
 $('#micBtn').addEventListener('click', startMic);
 
 /* ---------- polaroids ---------- */
-document.querySelectorAll('.pol').forEach(p => p.addEventListener('click', () => {
-  if (p.classList.contains('top')) return openLightbox('img', [...document.querySelectorAll('.pol')].map(x => x.dataset.src), [...document.querySelectorAll('.pol')].indexOf(p));
-  document.querySelectorAll('.pol').forEach(x => x.classList.remove('top')); p.classList.add('top');
-}));
+const pols = [...document.querySelectorAll('.pol')];
+pols.forEach((p, i) => p.addEventListener('click', () => openLightbox('img', pols.map(x => x.dataset.src), i)));
 
 /* ---------- video reel ---------- */
 const TAGS = ['Vibes ✨','Squad 🤝','Eid Mubarak 🌙','King 👑','Good times 🤍','Mirror check','Smooth 😎','Golden hour'];
